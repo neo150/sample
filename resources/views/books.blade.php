@@ -5,30 +5,70 @@
             本のタイトル
         </div>
 
-        {{-- @include('common.errors') --}}
+        @include('common.errors')
 
-        <form action="{{ url('books') }}" method="POST" class="form-horizonral">
+        <form enctype="multipart/form-data" action="{{ url('books') }}" method="POST" class="form-horizonral">
             {{ csrf_field() }}
-
-            <div class="form-group">
-                <div class="col-sm-6">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="book" class="col-sm-3 control-label">Book</label>
                     <input type="text" name="item_name" class="form-control">
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="col-sm-offset-3 col-sm-6">
-                    <button type="submit" class="btn btn-primary">
-                        Save
-                    </button>
+                <div class="form-group col-md-6">
+
+                    <label for="amount" class="col-sm-3 control-label">金額</label>
+                    <input type="text" name="item_amount" class="form-control">
                 </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="number" class="col-sm-3 control-label">数</label>
+                    <input type="text" name="item_number" class="form-control">
+                    {{-- {{ Form::select('age', ['Under 18', '19 to 30', 'Over 30']) }}
+                    --}}
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="place_id" class="col-sm-3 control-label">場所</label>
+                    <select id="place_id" name="place_id"
+                        class="form-control {{ $errors->has('place_id') ? 'is-invalid' : '' }}"
+                        value="{{ old('place_id') }}">
+                        @foreach ($getPlaces as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="published" class="col-sm-3 control-label">公開日</label>
+                    <input type="date" name="published" class="form-control">
+                </div>
+
+                {{-- file追加 --}}
+                <div class="form-row">
+                    <div class="col-sm-6">
+                        <label>画像</label>
+                        <input type="file" name="item_img">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-6">
+                            <button type="submit" class="btn btn-primary">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
         </form>
 
         {{-- 現在の本 --}}
         @if (count($books) > 0)
             <div class="card-body">
-                現在の本
+                {{ Auth::user()->name }} さんの現在の本
             </div>
             <div class="card-body">
                 <table class="table table-striped task-table">
@@ -44,6 +84,18 @@
                                 {{-- 本タイトル --}}
                                 <td class="table-text">
                                     <div>{{ $book->item_name }}</div>
+                                    <div>{{ $book->user->name }}</div>
+                                    <div>{{ $book->place->name }}</div>
+                                    <div><img src="upload/{{ $book->item_img }}" width="100"></div>
+                                </td>
+                                {{-- 本更新ボタン --}}
+                                <td>
+                                    <form action="{{ url('booksedit/' . $book->id) }}" method="POST">
+                                        {{ csrf_field() }}
+                                        <button type="submit" class="btn btn-primary">
+                                            更新
+                                        </button>
+                                    </form>
                                 </td>
                                 {{-- 本削除ボタン --}}
                                 <td>

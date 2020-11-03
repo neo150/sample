@@ -20,24 +20,23 @@ use Illuminate\Http\Request;
 //     ]);
 // });
 
+// 場所表示
+Route::get('/places', 'PlacesController@index');
+
+// 本ダッシュボード表示
 Route::get('/', 'BooksController@index');
 
-Route::post('/books', function (Request $request) {
-    $books = new Book;
-    $books->item_name = $request->item_name;
-    $books->item_number = '1';
-    $books->item_amount = '1000';
-    $books->published = '2020-10-30 00:00:00';
-    $books->save();
-    return redirect('/');
-});
+// 新本追加
+Route::post('/books', 'BooksController@store');
 
-Route::delete('/book/{book}', function (Book $book) {
-    $book->delete();
-    return redirect('/');
-});
+// 本削除
+Route::delete('/book/{book}', 'BooksController@destory');
 
-Route::post('/books/update', 'BooksController@update');
+// 更新処理
+Route::post('books/update', 'BooksController@update');
+
+// 更新画面
+Route::post('/booksedit/{books}', 'BooksController@edit');
 
 Auth::routes();
 
